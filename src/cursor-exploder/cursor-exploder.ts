@@ -170,7 +170,7 @@ export class CursorExploder implements Plugin {
 
         const defaultCss = {
             position: 'absolute',
-            ['margin-left'] : `-${leftValue}ch`,
+            ['margin-left']: `-${leftValue}ch`,
             ['margin-top']: `-${topValue}rem`,
             width: `${this.config.explosionSize}ch`,
             height: `${this.config.explosionSize}rem`,

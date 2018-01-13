@@ -19,6 +19,6 @@ export const Flames: ThemeConfig = {
         flame,
     ],
     customCss: {
-        "left": "-1ch",
+        "margin-left": "-1ch",
     }
 }

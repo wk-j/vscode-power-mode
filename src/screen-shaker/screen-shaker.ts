@@ -3,12 +3,10 @@ import * as vscode from 'vscode';
 import { Plugin } from '../plugin';
 import { ThemeConfig, getConfigValue } from '../config/config';
 
-const ENABLED = true;
-const SHAKE_INTENSITY = 5;
-
 export class ScreenShakerConfig {
     enableShake: boolean;
     shakeIntensity?: number;
+    shakeTimeout?: number;
 }
 
 export class ScreenShaker implements Plugin {
@@ -18,7 +16,7 @@ export class ScreenShaker implements Plugin {
     private negativeY: vscode.TextEditorDecorationType;
     private positiveY: vscode.TextEditorDecorationType;
     private shakeDecorations: vscode.TextEditorDecorationType[] = [];
-    private shakeTimeout: NodeJS.Timer;
+    private shakeTimer: NodeJS.Timer;
     private config: ScreenShakerConfig = {} as ScreenShakerConfig;
 
     // A range that represents the full document. A top margin is applied
@@ -30,7 +28,7 @@ export class ScreenShaker implements Plugin {
     public activate = () => {
         this.dispose();
         this.negativeX = vscode.window.createTextEditorDecorationType(<vscode.DecorationRenderOptions>{
-            textDecoration: `none; margin-left: 0px;`
+            textDecoration: `none; margin-left: -${this.config.shakeIntensity}px;`
         });
 
         this.positiveX = vscode.window.createTextEditorDecorationType(<vscode.DecorationRenderOptions>{
@@ -38,7 +36,7 @@ export class ScreenShaker implements Plugin {
         });
 
         this.negativeY = vscode.window.createTextEditorDecorationType(<vscode.DecorationRenderOptions>{
-            textDecoration: `none; margin-top: 0px;`
+            textDecoration: `none; margin-top: -${this.config.shakeIntensity}px;`
         });
 
         this.positiveY = vscode.window.createTextEditorDecorationType(<vscode.DecorationRenderOptions>{
@@ -54,7 +52,7 @@ export class ScreenShaker implements Plugin {
     }
 
     public dispose = () => {
-        clearTimeout(this.shakeTimeout);
+        clearTimeout(this.shakeTimer);
         this.shakeDecorations.forEach(decoration => decoration.dispose());
     }
 
@@ -79,6 +77,7 @@ export class ScreenShaker implements Plugin {
         const newConfig: ScreenShakerConfig = {
             enableShake: getConfigValue<boolean>('enableShake', config, this.themeConfig),
             shakeIntensity: getConfigValue<number>('shakeIntensity', config, this.themeConfig),
+            shakeTimeout: getConfigValue<number>('shakeTimeout', config, this.themeConfig),
         };
 
         let changed = false;
@@ -153,10 +152,10 @@ export class ScreenShaker implements Plugin {
             activeEditor.setDecorations(this.negativeY, this.fullRange);
         }
 
-        clearTimeout(this.shakeTimeout);
-        this.shakeTimeout = setTimeout(() => {
+        clearTimeout(this.shakeTimer);
+        this.shakeTimer = setTimeout(() => {
             this.unshake();
-        }, 1000);
+        }, this.config.shakeTimeout);
     }
 
     /**

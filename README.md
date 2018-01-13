@@ -43,8 +43,9 @@ You can now choose explosions with a single setting: `powermode.presets`. Check 
 ![clippy](images/demo-presets-clippy.gif)
 
 ## Configuration:
-Hopefully power mode will work great for you out of the box, but if it doesn't I've tried to make power mode as configurable as possible. Tweak the settings for performance or for fun. From doge to clippy, the only limit is your imagination. Some of the options are explained below:
+Hopefully power mode will work great for you out of the box, but if it doesn't I've tried to make power mode as configurable as possible. Tweak the settings for performance or for fun. From doge to clippy, the only limit is your imagination. Some of the options are explained below, the rest you can find in your user or workspace settings.
 
+* `powermode.enableShake`: Set to false to disable shaking
 * `powermode.customExplosions`: Choose your own explosions with base64 encoded gifs or full URIs (i.e. "data:image/gif;base64,1337GIF", "C:/my/cat/gif", "https://coolgif.io")
 * `powermode.backgroundMode`: `mask` will use the gif as a mask, letting the shape of the gif through with the color of the text. `image` will use the gif itself as the background.
 ![mask](images/demo-mask-fireworks.gif)
@@ -59,11 +60,10 @@ Hopefully power mode will work great for you out of the box, but if it doesn't I
 
 They were right when they said it can't be done. At least not properly. VS Code does not expose the DOM as part of the API. Instead this extension relies on using TextEditorDecorations to set css properties for ranges in the editor. This has a few limitations:
 * The cursor doesn't move with the text as it shakes
-* When deleting characters, the explosion will briefly move to the beginning of the line. This is because I am using an "after" pseudoclass to apply the decorations, and when you delete the letter that it is anchored to it repositions to the next anchor which is the entire line.
 * I have to use gifs instead of CSS animations for the particles/explosions
 * "Vertical Shake" only works if `editor.renderWhitespace` is turned on. I don't know why, but if you want vertical shake without seeing the whitespace being rendered, you can use these settings:
 
-```
+```json
 "editor.renderWhitespace": "all",
 "workbench.colorCustomizations": {
     "editorWhitespace.foreground": "#FFFFFF00"
@@ -78,6 +78,10 @@ If you can provide some lightweight, attractive gifs that improve how power mode
 * Thanks to [@horvay](https://github.com/horvay) for giving me ideas to get around the limitations I had in v0.0.1
 
 ## Changelog:
+- v2.1.0
+  - Merged fix by @kirkone for #20, #22, #23 (Explosions only appear at the start of a line)
+  - Custom css should use `margin-*` instead of `top`, `left`, etc.
+  - Added `powermode.shakeTimeout` to control how long the shake lasts. Defaults to 100ms (previously was 1 second)
 - v2.0.0
   - Added `powermode.presets` to choose between different built-in explosion sets
   - Added `powermode.backgroundMode` to allow 'atom like' explosions (explosions that match the color of the text being typed)

@@ -18,7 +18,7 @@ export const Clippy: ThemeConfig = {
         clippy,
     ],
     customCss: {
-        "left": "1ch",
-        "top": "1em",
+        "margin-left": "1ch",
+        "margin-top": "1em",
     },
 }
